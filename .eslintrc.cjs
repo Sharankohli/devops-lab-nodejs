@@ -3,13 +3,13 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es2021: true,
+    es2022: true,
   },
   extends: [
     'standard'
   ],
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2022, // top-level await in src/app.js
     sourceType: 'module',
   },
   rules: {
