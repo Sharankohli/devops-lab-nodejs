@@ -2,7 +2,7 @@
  * Unit tests for src/utils/appInfo.js.
  * No HTTP or Express involved; just pure functions.
  */
-import { readFileSync } from 'node:fs'
+import fs, { readFileSync } from 'node:fs'
 import { afterEach, describe, it, expect, vi } from 'vitest'
 import { getPackageInfo, getRuntimeInfo } from '../../src/utils/appInfo.js'
 
@@ -13,6 +13,15 @@ afterEach(() => vi.restoreAllMocks())
 describe('getPackageInfo', () => {
   it('returns exactly the name and version from package.json', () => {
     expect(getPackageInfo()).toEqual({ name, version })
+  })
+
+  it('does not read package.json again on each call and returns a fresh object', () => {
+    const read = vi.spyOn(fs, 'readFileSync')
+    const first = getPackageInfo()
+    first.version = 'changed'
+
+    expect(getPackageInfo()).toEqual({ name, version })
+    expect(read).not.toHaveBeenCalled()
   })
 })
 
