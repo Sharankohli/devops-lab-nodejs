@@ -29,7 +29,7 @@ Open `coverage/index.html` for a visual coverage report (locally).
 - `GET /` – basic JSON greeting
 - `GET /health` – health check (200 OK)
 - `GET /version` – returns `{ version }` from `package.json`
-- `GET /info` – returns `{ name, version, node, uptime }`
+- `GET /info` – returns `{ name, version, node, uptime }` as JSON: package name and version, current Node.js version, and process uptime in seconds (including fractions), refreshed on every request.
 - `GET /boom` – triggers an error to test the global error handler
 
 Routes are **auto-mounted** from `src/routes/auto/*.route.js` so each student can add a file without touching `src/app.js` (fewer merge conflicts).
