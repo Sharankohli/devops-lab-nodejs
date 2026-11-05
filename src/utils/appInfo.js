@@ -9,10 +9,12 @@ import { fileURLToPath } from 'node:url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// Read package.json once at startup instead of on every /info request
+const pkg = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf-8')
+)
+
 export function getPackageInfo () {
-  const pkg = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '..', '..', 'package.json'), 'utf-8')
-  )
   return { name: pkg.name, version: pkg.version }
 }
 
