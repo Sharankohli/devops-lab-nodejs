@@ -18,4 +18,14 @@ describe('formatStatus', () => {
   it('steady at or after 1h', () => {
     expect(formatStatus(3600)).toBe('steady')
   })
+  it('switches label exactly at 60s and 3600s', () => {
+    expect(formatStatus(0)).toBe('warming-up')
+    expect(formatStatus(59)).toBe('warming-up')
+    expect(formatStatus(60)).toBe('healthy')
+    expect(formatStatus(3599)).toBe('healthy')
+    expect(formatStatus(3600)).toBe('steady')
+  })
+  it.each(['abc', NaN, undefined, null, Infinity])('throws on non-numeric uptime %s', (value) => {
+    expect(() => formatStatus(value)).toThrow('invalid uptime')
+  })
 })
