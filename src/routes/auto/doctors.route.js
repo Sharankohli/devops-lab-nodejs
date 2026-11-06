@@ -21,7 +21,11 @@ router.post('/api/doctors', (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' })
   }
 
-  const doctor = { id: nextId(doctors), name: name.trim(), specialty: specialty.trim() }
+  const doctor = {
+    id: nextId(doctors),
+    name: name.trim(),
+    specialty: specialty.trim()
+  }
   doctors.push(doctor)
   res.status(201).json(doctor)
 })
