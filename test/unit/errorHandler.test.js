@@ -2,8 +2,8 @@
  * Unit tests for src/utils/errorHandler.js.
  * We stub a minimal `res` object to capture status and body.
  */
-import { describe, it, expect } from 'vitest'
-import { errorHandler } from '../../src/utils/errorHandler.js'
+import { afterEach, describe, it, expect, vi } from 'vitest'
+import { errorHandler, notFound } from '../../src/utils/errorHandler.js'
 
 function makeRes () {
   return {
@@ -14,18 +14,39 @@ function makeRes () {
   }
 }
 
+afterEach(() => vi.restoreAllMocks())
+
 describe('errorHandler', () => {
-  it('defaults to 500 with generic message', () => {
+  it('answers 500 "Internal server error" and logs an unexpected error', () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const err = new Error('db exploded')
     const res = makeRes()
-    errorHandler({}, {}, res, () => {})
+    errorHandler(err, {}, res, () => {})
     expect(res.statusCode).toBe(500)
-    expect(res.body).toEqual({ error: true, message: 'Internal Server Error' })
+    expect(res.body).toEqual({ error: 'Internal server error' })
+    expect(log).toHaveBeenCalledWith(err)
   })
 
-  it('uses provided status and message', () => {
+  it('keeps the status and message of an error created on purpose', () => {
     const res = makeRes()
     errorHandler({ status: 418, message: 'teapot' }, {}, res, () => {})
     expect(res.statusCode).toBe(418)
     expect(res.body).toEqual({ error: true, message: 'teapot' })
+  })
+
+  it('accepts statusCode and a missing message', () => {
+    const res = makeRes()
+    errorHandler({ statusCode: 400 }, {}, res, () => {})
+    expect(res.statusCode).toBe(400)
+    expect(res.body).toEqual({ error: true, message: 'Error' })
+  })
+})
+
+describe('notFound', () => {
+  it('answers 404 { error: "Not found" }', () => {
+    const res = makeRes()
+    notFound({}, res)
+    expect(res.statusCode).toBe(404)
+    expect(res.body).toEqual({ error: 'Not found' })
   })
 })
